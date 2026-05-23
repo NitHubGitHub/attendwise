@@ -1,5 +1,4 @@
 import requests
-import mysql.connector
 import gspread
 
 from bs4 import BeautifulSoup
@@ -9,20 +8,76 @@ from oauth2client.service_account import (
     ServiceAccountCredentials
 )
 
+# ============================================
+# SUBJECT DATABASE (REPLACES MYSQL)
+# ============================================
+
+subjects = {
+
+    # SEM 1
+    "23IZ101": {"credits": 4, "hours": 64},
+    "23IZ102": {"credits": 3, "hours": 48},
+    "23IZ103": {"credits": 3, "hours": 48},
+    "23IZ104": {"credits": 4, "hours": 64},
+    "23IZ105": {"credits": 4, "hours": 64},
+    "23IZ110": {"credits": 2, "hours": 64},
+    "23IZ111": {"credits": 2, "hours": 64},
+    "23IG065": {"credits": 4, "hours": 192},
+
+    # SEM 2
+    "23IZ201": {"credits": 4, "hours": 64},
+    "23IZ202": {"credits": 4, "hours": 64},
+    "23IZ203": {"credits": 4, "hours": 64},
+    "23IZ204": {"credits": 3, "hours": 48},
+    "23IZ211": {"credits": 2, "hours": 64},
+    "23IZ212": {"credits": 2, "hours": 64},
+    "23IZ213": {"credits": 0, "hours": 32},
+    "23IG066": {"credits": 4, "hours": 192},
+    "23IH072": {"credits": 3, "hours": 48},
+
+    # SEM 3
+    "23IZ301": {"credits": 4, "hours": 64},
+    "23IZ302": {"credits": 4, "hours": 64},
+    "23IZ303": {"credits": 3, "hours": 48},
+    "23IZ304": {"credits": 4, "hours": 64},
+    "23IZ305": {"credits": 4, "hours": 64},
+    "23IZ310": {"credits": 2, "hours": 64},
+    "23IZ311": {"credits": 2, "hours": 64},
+    "23IH073": {"credits": 3, "hours": 48},
+    "23IG067": {"credits": 4, "hours": 192},
+
+    # SEM 4
+    "23IZ401": {"credits": 4, "hours": 64},
+    "23IZ402": {"credits": 3, "hours": 48},
+    "23IZ403": {"credits": 4, "hours": 64},
+    "23IZ404": {"credits": 4, "hours": 64},
+    "23IZ405": {"credits": 4, "hours": 64},
+    "23IZ410": {"credits": 2, "hours": 64},
+    "23IZ411": {"credits": 2, "hours": 64},
+    "23IZ413": {"credits": 1, "hours": 32},
+    "23IG068": {"credits": 4, "hours": 192},
+    "23IH074": {"credits": 2, "hours": 96},
+
+    # SEM 5
+    "23IZ501": {"credits": 3, "hours": 48},
+    "23IZ502": {"credits": 4, "hours": 64},
+    "23IZ503": {"credits": 4, "hours": 64},
+    "23IZ504": {"credits": 3, "hours": 48},
+    "23IZ510": {"credits": 2, "hours": 64},
+    "23IZ511": {"credits": 2, "hours": 64},
+    "23IG069": {"credits": 4, "hours": 192},
+
+    # SEM 6
+    "23IZ601": {"credits": 3, "hours": 48},
+    "23IZ602": {"credits": 4, "hours": 64},
+    "23IZ603": {"credits": 4, "hours": 64},
+    "23IZ610": {"credits": 2, "hours": 64},
+    "23Z611": {"credits": 1, "hours": 32},
+    "23IG070": {"credits": 4, "hours": 192}
+}
+
+
 def analyze_attendance(email, password):
-
-    # ============================================
-    # MYSQL CONNECTION
-    # ============================================
-
-    db = mysql.connector.connect(
-        host="localhost",
-        user="root",
-        password="dbms@2026",
-        database="attendance_system"
-    )
-
-    cursor = db.cursor(dictionary=True)
 
     # ============================================
     # GOOGLE SHEETS CONNECTION
@@ -111,9 +166,6 @@ def analyze_attendance(email, password):
             "FAILED"
         ])
 
-        cursor.close()
-        db.close()
-
         return {
             "success": False,
             "message": "Login Failed"
@@ -173,10 +225,6 @@ def analyze_attendance(email, password):
 
             try:
 
-                # ============================================
-                # SCRAPED VALUES
-                # ============================================
-
                 course_code = cols[0].text.strip()
 
                 course_name = cols[1].text.strip()
@@ -194,50 +242,17 @@ def analyze_attendance(email, password):
                 )
 
                 # ============================================
-                # GET MYSQL DATA
+                # SUBJECT LOOKUP FROM DICTIONARY
                 # ============================================
 
-                query = """
-                SELECT credits, expected_total_hours
-                FROM subjects
-                WHERE course_code = %s
-                """
-
-                cursor.execute(
-                    query,
-                    (course_code,)
-                )
-
-                subject = cursor.fetchone()
+                subject = subjects.get(course_code)
 
                 if subject is None:
                     continue
 
                 credits = subject["credits"]
 
-                # ============================================
-                # SAFETY HOURS LOGIC
-                # ============================================
-
-                if credits == 4:
-
-                    final_total_hours = 64
-
-                elif credits == 3:
-
-                    final_total_hours = 48
-
-                elif credits == 2:
-
-                    final_total_hours = 64
-
-                else:
-
-                    final_total_hours = (
-                        subject[
-                            "expected_total_hours"
-                        ]
-                    )
+                final_total_hours = subject["hours"]
 
                 # ============================================
                 # SAFE LEAVE CALCULATIONS
@@ -299,13 +314,6 @@ def analyze_attendance(email, password):
             except Exception as e:
 
                 print("ERROR:", e)
-
-    # ============================================
-    # CLOSE MYSQL
-    # ============================================
-
-    cursor.close()
-    db.close()
 
     # ============================================
     # RETURN RESULTS
