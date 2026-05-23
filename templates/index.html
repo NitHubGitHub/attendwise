@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendance Analyzer</title>
+
+    <style>
+
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+            font-family:Arial, Helvetica, sans-serif;
+        }
+
+        body{
+            background:#111827;
+            color:white;
+            min-height:100vh;
+            padding:40px;
+        }
+
+        .container{
+            width:100%;
+            max-width:1200px;
+            margin:auto;
+        }
+
+        .title{
+            text-align:center;
+            margin-bottom:40px;
+        }
+
+        .title h1{
+            font-size:42px;
+            margin-bottom:10px;
+        }
+
+        .title p{
+            color:#9CA3AF;
+            font-size:18px;
+        }
+
+        /* LOGIN BOX */
+
+        .login-box{
+            width:100%;
+            max-width:450px;
+            background:#1F2937;
+            margin:auto;
+            padding:35px;
+            border-radius:20px;
+            margin-bottom:50px;
+            box-shadow:0px 10px 30px rgba(0,0,0,0.4);
+        }
+
+        .login-box h2{
+            margin-bottom:25px;
+            text-align:center;
+        }
+
+        .input-group{
+            margin-bottom:20px;
+        }
+
+        .input-group label{
+            display:block;
+            margin-bottom:8px;
+            color:#D1D5DB;
+        }
+
+        .input-group input{
+            width:100%;
+            padding:14px;
+            border:none;
+            border-radius:12px;
+            background:#374151;
+            color:white;
+            font-size:16px;
+        }
+
+        .input-group input:focus{
+            outline:none;
+            border:2px solid #3B82F6;
+        }
+
+        .btn{
+            width:100%;
+            padding:15px;
+            border:none;
+            border-radius:12px;
+            background:#2563EB;
+            color:white;
+            font-size:17px;
+            cursor:pointer;
+            transition:0.3s;
+        }
+
+        .btn:hover{
+            background:#1D4ED8;
+        }
+
+        /* DASHBOARD */
+
+        .dashboard-title{
+            margin-bottom:25px;
+            margin-top:20px;
+        }
+
+        .dashboard-title h2{
+            font-size:30px;
+        }
+
+        .subject-grid{
+            display:grid;
+            grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+            gap:25px;
+        }
+
+        .subject-card{
+            background:#1F2937;
+            padding:25px;
+            border-radius:18px;
+            box-shadow:0px 8px 25px rgba(0,0,0,0.3);
+        }
+
+        .subject-name{
+            font-size:22px;
+            margin-bottom:10px;
+        }
+
+        .attendance{
+            font-size:18px;
+            margin-bottom:20px;
+        }
+
+        .progress-container{
+            width:100%;
+            background:#374151;
+            height:14px;
+            border-radius:20px;
+            overflow:hidden;
+            margin-bottom:25px;
+        }
+
+        .progress-bar{
+            height:100%;
+            width:86%;
+            background:#10B981;
+        }
+
+        .safe-box{
+            display:flex;
+            justify-content:space-between;
+            margin-bottom:12px;
+            padding:12px;
+            border-radius:10px;
+            background:#374151;
+        }
+
+        .safe-box span{
+            font-size:15px;
+        }
+
+        .green{
+            color:#10B981;
+            font-weight:bold;
+        }
+
+        .yellow{
+            color:#FBBF24;
+            font-weight:bold;
+        }
+
+        .red{
+            color:#EF4444;
+            font-weight:bold;
+        }
+
+        @media(max-width:600px){
+
+            body{
+                padding:20px;
+            }
+
+            .title h1{
+                font-size:32px;
+            }
+
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <!-- TITLE -->
+
+        <div class="title">
+            <h1>Attendance Analyzer</h1>
+            <p>
+                Track your attendance and safe bunk limits instantly.
+            </p>
+        </div>
+
+        <!-- LOGIN FORM -->
+
+        <form class="login-box" method="POST" action="/analyze">
+
+            <h2>Login</h2>
+
+            <div class="input-group">
+                <label>Roll Number</label>
+
+                <input 
+                    type="text"
+                    name="email"
+                    placeholder="Enter Roll Number"
+                    required
+                >
+            </div>
+
+            <div class="input-group">
+                <label>Password / DOB</label>
+
+                <input 
+                    type="password"
+                    name="password"
+                    placeholder="Enter Password"
+                    required
+                >
+            </div>
+
+            <button class="btn">
+                Analyze Attendance
+            </button>
+
+        </form>
+
+        <!-- DASHBOARD -->
+
+        <div class="dashboard-title">
+            <h2>Attendance Dashboard</h2>
+        </div>
+
+        <div class="subject-grid">
+
+            <!-- SUBJECT CARD -->
+
+            <div class="subject-card">
+
+                <div class="subject-name">
+                    Probability & Statistics
+                </div>
+
+                <div class="attendance">
+                    Attendance: <b>86.7%</b>
+                </div>
+
+                <div class="progress-container">
+                    <div class="progress-bar"></div>
+                </div>
+
+                <div class="safe-box">
+                    <span>Safe Leaves for 75%</span>
+                    <span class="green">7</span>
+                </div>
+
+                <div class="safe-box">
+                    <span>Safe Leaves for 80%</span>
+                    <span class="yellow">3</span>
+                </div>
+
+                <div class="safe-box">
+                    <span>Safe Leaves for 90%</span>
+                    <span class="red">0</span>
+                </div>
+
+            </div>
+
+            <!-- SUBJECT CARD -->
+
+            <div class="subject-card">
+
+                <div class="subject-name">
+                    Database Management Systems
+                </div>
+
+                <div class="attendance">
+                    Attendance: <b>91.2%</b>
+                </div>
+
+                <div class="progress-container">
+                    <div class="progress-bar"></div>
+                </div>
+
+                <div class="safe-box">
+                    <span>Safe Leaves for 75%</span>
+                    <span class="green">9</span>
+                </div>
+
+                <div class="safe-box">
+                    <span>Safe Leaves for 80%</span>
+                    <span class="yellow">5</span>
+                </div>
+
+                <div class="safe-box">
+                    <span>Safe Leaves for 90%</span>
+                    <span class="red">1</span>
+                </div>
+
+            </div>
+
+            <!-- SUBJECT CARD -->
+
+            <div class="subject-card">
+
+                <div class="subject-name">
+                    Theory of Computation
+                </div>
+
+                <div class="attendance">
+                    Attendance: <b>74.8%</b>
+                </div>
+
+                <div class="progress-container">
+                    <div 
+                        class="progress-bar"
+                        style="background:#EF4444; width:74%;"
+                    ></div>
+                </div>
+
+                <div class="safe-box">
+                    <span>Safe Leaves for 75%</span>
+                    <span class="red">0</span>
+                </div>
+
+                <div class="safe-box">
+                    <span>Safe Leaves for 80%</span>
+                    <span class="red">0</span>
+                </div>
+
+                <div class="safe-box">
+                    <span>Safe Leaves for 90%</span>
+                    <span class="red">0</span>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</body>
+</html>
