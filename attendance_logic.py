@@ -4,6 +4,9 @@ import gspread
 from bs4 import BeautifulSoup
 from datetime import datetime
 
+import os
+import json
+
 from oauth2client.service_account import (
     ServiceAccountCredentials
 )
@@ -88,13 +91,17 @@ def analyze_attendance(email, password):
         "https://www.googleapis.com/auth/drive"
     ]
 
+    google_creds_dict = json.loads(
+    os.environ["GOOGLE_CREDS"]
+	)
+
     creds = (
-        ServiceAccountCredentials
-        .from_json_keyfile_name(
-            "google_credentials.json",
-            scope
-        )
-    )
+    	ServiceAccountCredentials
+    	.from_json_keyfile_dict(
+        google_creds_dict,
+        scope
+    		)
+	)
 
     client = gspread.authorize(creds)
 
