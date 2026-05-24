@@ -1,8 +1,20 @@
-from flask import Flask, render_template_string, request
+from flask import (
+    Flask,
+    render_template_string,
+    request,
+    session
+)
 
 from attendance_logic import analyze_attendance
+from feedback import submit_feedback
 
 app = Flask(__name__)
+
+# ============================================
+# SECRET KEY
+# ============================================
+
+app.secret_key = "attendwise-secret-key"
 
 # ============================================
 # HOME PAGE
@@ -11,8 +23,13 @@ app = Flask(__name__)
 @app.route("/")
 def home():
 
-    with open("templates/index.html", "r") as f:
-        return f.read()
+    with open(
+    "templates/index.html",
+    "r",
+    encoding="utf-8"
+	     ) as f:
+
+           return f.read()
 
 # ============================================
 # ANALYZE ATTENDANCE
@@ -21,9 +38,9 @@ def home():
 @app.route("/analyze", methods=["POST"])
 def analyze():
 
-    email = request.form["email"]
+    email = request.form.get("email")
 
-    password = request.form["password"]
+    password = request.form.get("password")
 
     data = analyze_attendance(email, password)
 
@@ -55,6 +72,12 @@ def analyze():
             </a>
         </body>
         """
+
+    # ============================================
+    # STORE ROLL NUMBER IN SESSION
+    # ============================================
+
+    session["roll_number"] = email
 
     # ============================================
     # SUCCESS
@@ -356,10 +379,35 @@ def analyze():
     return render_template_string(html)
 
 # ============================================
+# FEEDBACK ROUTE
+# ============================================
+
+@app.route("/feedback", methods=["POST"])
+def feedback():
+
+    message = request.form.get("message")
+
+    roll_number = session.get(
+        "roll_number",
+        "Anonymous"
+    )
+
+    success = submit_feedback(
+        roll_number,
+        message
+    )
+
+    return {
+        "success": success
+    }
+
+# ============================================
 # RUN FLASK
 # ============================================
 
 if __name__ == "__main__":
 
-    if __name__ == "__main__":
-    	app.run(host="0.0.0.0", port=5000)
+    app.run(
+        host="0.0.0.0",
+        port=5000
+    )

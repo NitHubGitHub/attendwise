@@ -353,6 +353,520 @@
         </div>
 
     </div>
+    <!-- ========================================= -->
+<!-- FEEDBACK BUTTON -->
+<!-- ========================================= -->
+
+<div class="feedback-button" onclick="openFeedback()">
+    💬 Feedback
+</div>
+
+<!-- ========================================= -->
+<!-- FEEDBACK POPUP -->
+<!-- ========================================= -->
+
+<div class="feedback-popup" id="feedbackPopup">
+
+    <div class="feedback-header">
+
+        <h3>Anonymous Feedback</h3>
+
+        <button onclick="closeFeedback()">
+            ✕
+        </button>
+
+    </div>
+
+    <p class="feedback-text">
+        Found a bug or have an idea?
+    </p>
+
+    
+
+    <textarea
+        id="feedbackMessage"
+        placeholder="Enter feedback..."
+    ></textarea>
+
+    <button onclick="submitFeedback()">
+        Send Feedback
+    </button>
+
+    <div id="feedbackStatus"></div>
+
+</div>
+
+<!-- ========================================= -->
+<!-- FEEDBACK STYLES -->
+<!-- ========================================= -->
+
+<style>
+
+.feedback-button{
+
+    position:fixed;
+
+    bottom:20px;
+    left:20px;
+
+    background:#2563EB;
+
+    color:white;
+
+    padding:14px 18px;
+
+    border-radius:14px;
+
+    cursor:pointer;
+
+    box-shadow:0px 8px 25px rgba(0,0,0,0.4);
+
+    z-index:999;
+}
+
+.feedback-button:hover{
+
+    background:#1D4ED8;
+}
+
+.feedback-popup{
+
+    position:fixed;
+
+    bottom:80px;
+    left:20px;
+
+    width:320px;
+
+    background:#1F2937;
+
+    border-radius:18px;
+
+    padding:20px;
+
+    box-shadow:0px 10px 35px rgba(0,0,0,0.5);
+
+    display:none;
+
+    z-index:1000;
+}
+
+.feedback-header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:15px;
+}
+
+.feedback-header button{
+
+    background:none;
+
+    border:none;
+
+    color:white;
+
+    font-size:18px;
+
+    cursor:pointer;
+}
+
+.feedback-text{
+
+    color:#D1D5DB;
+
+    margin-bottom:15px;
+
+    font-size:14px;
+}
+
+.feedback-popup input,
+.feedback-popup textarea{
+
+    width:100%;
+
+    background:#374151;
+
+    border:none;
+
+    border-radius:10px;
+
+    padding:12px;
+
+    color:white;
+
+    margin-bottom:15px;
+
+    font-size:14px;
+}
+
+.feedback-popup textarea{
+
+    height:120px;
+
+    resize:none;
+}
+
+.feedback-popup button{
+
+    width:100%;
+
+    padding:12px;
+
+    border:none;
+
+    border-radius:10px;
+
+    background:#2563EB;
+
+    color:white;
+
+    cursor:pointer;
+}
+
+.feedback-popup button:hover{
+
+    background:#1D4ED8;
+}
+
+#feedbackStatus{
+
+    margin-top:12px;
+
+    text-align:center;
+
+    color:#10B981;
+
+    font-size:14px;
+}
+
+</style>
+
+<!-- ========================================= -->
+<!-- FEEDBACK BUTTON -->
+<!-- ========================================= -->
+
+<div class="feedback-button" onclick="openFeedback()">
+    💬 Feedback
+</div>
+
+<!-- ========================================= -->
+<!-- FEEDBACK POPUP -->
+<!-- ========================================= -->
+
+<div class="feedback-popup" id="feedbackPopup">
+
+    <div class="feedback-header">
+
+        <h3>Anonymous Feedback</h3>
+
+        <button onclick="closeFeedback()">
+            ✕
+        </button>
+
+    </div>
+
+    <p class="feedback-text">
+        Found a bug or have an idea?
+    </p>
+
+    <textarea
+        id="feedbackMessage"
+        placeholder="Enter feedback..."
+    ></textarea>
+
+    <button onclick="submitFeedback()">
+        Send Feedback
+    </button>
+
+    <div id="feedbackStatus"></div>
+
+</div>
+
+<!-- ========================================= -->
+<!-- FEEDBACK STYLES -->
+<!-- ========================================= -->
+
+<style>
+
+.feedback-button{
+
+    position:fixed;
+
+    bottom:20px;
+    left:20px;
+
+    background:#2563EB;
+
+    color:white;
+
+    padding:14px 18px;
+
+    border-radius:14px;
+
+    cursor:pointer;
+
+    box-shadow:0px 8px 25px rgba(0,0,0,0.4);
+
+    z-index:999;
+
+    transition:0.3s;
+}
+
+.feedback-button:hover{
+
+    background:#1D4ED8;
+
+    transform:translateY(-2px);
+}
+
+.feedback-popup{
+
+    position:fixed;
+
+    bottom:80px;
+    left:20px;
+
+    width:320px;
+
+    background:#1F2937;
+
+    border-radius:18px;
+
+    padding:20px;
+
+    box-shadow:0px 10px 35px rgba(0,0,0,0.5);
+
+    display:none;
+
+    z-index:1000;
+}
+
+.feedback-header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:15px;
+}
+
+.feedback-header h3{
+
+    font-size:20px;
+}
+
+.feedback-header button{
+
+    background:none;
+
+    border:none;
+
+    color:white;
+
+    font-size:18px;
+
+    cursor:pointer;
+}
+
+.feedback-text{
+
+    color:#D1D5DB;
+
+    margin-bottom:15px;
+
+    font-size:14px;
+
+    line-height:1.5;
+}
+
+.feedback-popup textarea{
+
+    width:100%;
+
+    background:#374151;
+
+    border:none;
+
+    border-radius:10px;
+
+    padding:12px;
+
+    color:white;
+
+    margin-bottom:15px;
+
+    font-size:14px;
+
+    height:120px;
+
+    resize:none;
+}
+
+.feedback-popup textarea:focus{
+
+    outline:none;
+
+    border:2px solid #3B82F6;
+}
+
+.feedback-popup button{
+
+    width:100%;
+
+    padding:12px;
+
+    border:none;
+
+    border-radius:10px;
+
+    background:#2563EB;
+
+    color:white;
+
+    cursor:pointer;
+
+    font-size:15px;
+
+    transition:0.3s;
+}
+
+.feedback-popup button:hover{
+
+    background:#1D4ED8;
+}
+
+#feedbackStatus{
+
+    margin-top:12px;
+
+    text-align:center;
+
+    color:#10B981;
+
+    font-size:14px;
+}
+
+@media(max-width:600px){
+
+    .feedback-popup{
+
+        width:90%;
+
+        left:5%;
+    }
+
+    .feedback-button{
+
+        left:15px;
+        bottom:15px;
+    }
+}
+
+</style>
+
+<!-- ========================================= -->
+<!-- FEEDBACK SCRIPT -->
+<!-- ========================================= -->
+
+<script>
+
+function openFeedback(){
+
+    document.getElementById(
+        "feedbackPopup"
+    ).style.display = "block";
+}
+
+function closeFeedback(){
+
+    document.getElementById(
+        "feedbackPopup"
+    ).style.display = "none";
+}
+
+async function submitFeedback(){
+
+    const message = document.getElementById(
+        "feedbackMessage"
+    ).value;
+
+    const status = document.getElementById(
+        "feedbackStatus"
+    );
+
+    if(message.trim() === ""){
+
+        status.innerHTML =
+        "Please enter feedback.";
+
+        status.style.color = "#EF4444";
+
+        return;
+    }
+
+    const formData = new FormData();
+
+    formData.append(
+        "message",
+        message
+    );
+
+    try{
+
+        const response = await fetch(
+            "/feedback",
+            {
+                method:"POST",
+                body:formData
+            }
+        );
+
+        const data = await response.json();
+
+        if(data.success){
+
+            status.innerHTML =
+            "Feedback submitted ❤️";
+
+            status.style.color = "#10B981";
+
+            document.getElementById(
+                "feedbackMessage"
+            ).value = "";
+
+            setTimeout(() => {
+
+                closeFeedback();
+
+                status.innerHTML = "";
+
+            }, 1500);
+
+        }else{
+
+            status.innerHTML =
+            "Failed to submit feedback.";
+
+            status.style.color = "#EF4444";
+        }
+
+    }catch(error){
+
+        status.innerHTML =
+        "Something went wrong.";
+
+        status.style.color = "#EF4444";
+    }
+}
+
+</script>
 
 </body>
 </html>
