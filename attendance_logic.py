@@ -7,78 +7,15 @@ from datetime import datetime
 import os
 import json
 
+from subjects import subjects
+
 from oauth2client.service_account import (
     ServiceAccountCredentials
 )
 
 # ============================================
-# SUBJECT DATABASE (REPLACES MYSQL)
+# ANALYZE ATTENDANCE
 # ============================================
-
-subjects = {
-
-    # SEM 1
-    "23IZ101": {"credits": 4, "hours": 64},
-    "23IZ102": {"credits": 3, "hours": 48},
-    "23IZ103": {"credits": 3, "hours": 48},
-    "23IZ104": {"credits": 4, "hours": 64},
-    "23IZ105": {"credits": 4, "hours": 64},
-    "23IZ110": {"credits": 2, "hours": 64},
-    "23IZ111": {"credits": 2, "hours": 64},
-    "23IG065": {"credits": 4, "hours": 192},
-
-    # SEM 2
-    "23IZ201": {"credits": 4, "hours": 64},
-    "23IZ202": {"credits": 4, "hours": 64},
-    "23IZ203": {"credits": 4, "hours": 64},
-    "23IZ204": {"credits": 3, "hours": 48},
-    "23IZ211": {"credits": 2, "hours": 64},
-    "23IZ212": {"credits": 2, "hours": 64},
-    "23IZ213": {"credits": 0, "hours": 32},
-    "23IG066": {"credits": 4, "hours": 192},
-    "23IH072": {"credits": 3, "hours": 48},
-
-    # SEM 3
-    "23IZ301": {"credits": 4, "hours": 64},
-    "23IZ302": {"credits": 4, "hours": 64},
-    "23IZ303": {"credits": 3, "hours": 48},
-    "23IZ304": {"credits": 4, "hours": 64},
-    "23IZ305": {"credits": 4, "hours": 64},
-    "23IZ310": {"credits": 2, "hours": 64},
-    "23IZ311": {"credits": 2, "hours": 64},
-    "23IH073": {"credits": 3, "hours": 48},
-    "23IG067": {"credits": 4, "hours": 192},
-
-    # SEM 4
-    "23IZ401": {"credits": 4, "hours": 64},
-    "23IZ402": {"credits": 3, "hours": 48},
-    "23IZ403": {"credits": 4, "hours": 64},
-    "23IZ404": {"credits": 4, "hours": 64},
-    "23IZ405": {"credits": 4, "hours": 64},
-    "23IZ410": {"credits": 2, "hours": 64},
-    "23IZ411": {"credits": 2, "hours": 64},
-    "23IZ413": {"credits": 1, "hours": 32},
-    "23IG068": {"credits": 4, "hours": 192},
-    "23IH074": {"credits": 2, "hours": 96},
-
-    # SEM 5
-    "23IZ501": {"credits": 3, "hours": 48},
-    "23IZ502": {"credits": 4, "hours": 64},
-    "23IZ503": {"credits": 4, "hours": 64},
-    "23IZ504": {"credits": 3, "hours": 48},
-    "23IZ510": {"credits": 2, "hours": 64},
-    "23IZ511": {"credits": 2, "hours": 64},
-    "23IG069": {"credits": 4, "hours": 192},
-
-    # SEM 6
-    "23IZ601": {"credits": 3, "hours": 48},
-    "23IZ602": {"credits": 4, "hours": 64},
-    "23IZ603": {"credits": 4, "hours": 64},
-    "23IZ610": {"credits": 2, "hours": 64},
-    "23Z611": {"credits": 1, "hours": 32},
-    "23IG070": {"credits": 4, "hours": 192}
-}
-
 
 def analyze_attendance(email, password):
 
@@ -91,17 +28,33 @@ def analyze_attendance(email, password):
         "https://www.googleapis.com/auth/drive"
     ]
 
-    google_creds_dict = json.loads(
-    os.environ["GOOGLE_CREDS"]
-	)
+    # ============================================
+    # LOCAL / RENDER CREDS SUPPORT
+    # ============================================
 
-    creds = (
-    	ServiceAccountCredentials
-    	.from_json_keyfile_dict(
-        google_creds_dict,
-        scope
-    		)
-	)
+    if "GOOGLE_CREDS" in os.environ:
+
+        google_creds_dict = json.loads(
+            os.environ["GOOGLE_CREDS"]
+        )
+
+        creds = (
+            ServiceAccountCredentials
+            .from_json_keyfile_dict(
+                google_creds_dict,
+                scope
+            )
+        )
+
+    else:
+
+        creds = (
+            ServiceAccountCredentials
+            .from_json_keyfile_name(
+                "google_credentials.json",
+                scope
+            )
+        )
 
     client = gspread.authorize(creds)
 
@@ -121,7 +74,10 @@ def analyze_attendance(email, password):
 
     url = "https://ecampus.psgias.ac.in/"
 
-    page = session.get(url)
+    page = session.get(
+        url,
+        timeout=15
+    )
 
     # ============================================
     # EXTRACT TOKEN
@@ -158,7 +114,8 @@ def analyze_attendance(email, password):
 
     response = session.post(
         login_url,
-        data=payload
+        data=payload,
+        timeout=15
     )
 
     # ============================================
@@ -169,6 +126,7 @@ def analyze_attendance(email, password):
 
         sheet.append_row([
             email,
+            "Unknown",
             str(datetime.now()),
             "FAILED"
         ])
@@ -179,11 +137,60 @@ def analyze_attendance(email, password):
         }
 
     # ============================================
+    # EXTRACT STUDENT NAME
+    # ============================================
+
+    try:
+
+        home_soup = BeautifulSoup(
+            response.text,
+            "html.parser"
+        )
+
+        page_text = home_soup.get_text(
+            separator=" ",
+            strip=True
+        )
+
+        name = "Unknown"
+
+        words = page_text.split()
+
+        for i in range(len(words)):
+
+            if (
+                words[i].lower() == "welcome"
+                and i + 1 < len(words)
+            ):
+
+                possible_name = []
+
+                for j in range(i + 1, min(i + 6, len(words))):
+
+                    word = words[j]
+
+                    if (
+                        len(word) > 1
+                        and word[0].isalpha()
+                    ):
+                        possible_name.append(word)
+
+                if possible_name:
+
+                    name = " ".join(possible_name)
+                    break
+
+    except Exception:
+
+        name = "Unknown"
+
+    # ============================================
     # LOGIN SUCCESS
     # ============================================
 
     sheet.append_row([
         email,
+        name,
         str(datetime.now()),
         "SUCCESS"
     ])
@@ -198,7 +205,8 @@ def analyze_attendance(email, password):
     )
 
     attendance = session.get(
-        attendance_url
+        attendance_url,
+        timeout=15
     )
 
     # ============================================
@@ -211,6 +219,17 @@ def analyze_attendance(email, password):
     )
 
     table = attendance_soup.find("table")
+
+    # ============================================
+    # SAFETY CHECK
+    # ============================================
+
+    if table is None:
+
+        return {
+            "success": False,
+            "message": "Attendance table not found"
+        }
 
     rows = table.find_all("tr")
 
@@ -249,7 +268,7 @@ def analyze_attendance(email, password):
                 )
 
                 # ============================================
-                # SUBJECT LOOKUP FROM DICTIONARY
+                # SUBJECT LOOKUP
                 # ============================================
 
                 subject = subjects.get(course_code)
