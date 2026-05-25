@@ -147,38 +147,26 @@ def analyze_attendance(email, password):
             "html.parser"
         )
 
-        page_text = home_soup.get_text(
-            separator=" ",
-            strip=True
+        name_div = home_soup.find(
+            "div",
+            class_="d-none d-xl-block ps-2"
         )
 
-        name = "Unknown"
+        if name_div:
 
-        words = page_text.split()
+            inner_div = name_div.find("div")
 
-        for i in range(len(words)):
+            if inner_div:
 
-            if (
-                words[i].lower() == "welcome"
-                and i + 1 < len(words)
-            ):
+                name = inner_div.text.strip()
 
-                possible_name = []
+            else:
 
-                for j in range(i + 1, min(i + 6, len(words))):
+                name = "Unknown"
 
-                    word = words[j]
+        else:
 
-                    if (
-                        len(word) > 1
-                        and word[0].isalpha()
-                    ):
-                        possible_name.append(word)
-
-                if possible_name:
-
-                    name = " ".join(possible_name)
-                    break
+            name = "Unknown"
 
     except Exception:
 
