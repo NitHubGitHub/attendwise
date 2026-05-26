@@ -42,8 +42,6 @@
             font-size:18px;
         }
 
-        /* LOGIN BOX */
-
         .login-box{
             width:100%;
             max-width:450px;
@@ -101,81 +99,143 @@
             background:#1D4ED8;
         }
 
-        /* DASHBOARD */
-
-        .dashboard-title{
-            margin-bottom:25px;
-            margin-top:20px;
+        .feedback-button{
+            position:fixed;
+            bottom:20px;
+            left:20px;
+            background:#2563EB;
+            color:white;
+            padding:14px 18px;
+            border-radius:14px;
+            cursor:pointer;
+            box-shadow:0px 8px 25px rgba(0,0,0,0.4);
+            z-index:999;
+            transition:0.3s;
         }
 
-        .dashboard-title h2{
-            font-size:30px;
+        .feedback-button:hover{
+            background:#1D4ED8;
+            transform:translateY(-2px);
         }
 
-        .subject-grid{
-            display:grid;
-            grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
-            gap:25px;
-        }
-
-        .subject-card{
+        .feedback-popup{
+            position:fixed;
+            bottom:80px;
+            left:20px;
+            width:320px;
             background:#1F2937;
-            padding:25px;
             border-radius:18px;
-            box-shadow:0px 8px 25px rgba(0,0,0,0.3);
+            padding:20px;
+            box-shadow:0px 10px 35px rgba(0,0,0,0.5);
+            display:none;
+            z-index:1000;
         }
 
-        .subject-name{
-            font-size:22px;
-            margin-bottom:10px;
-        }
-
-        .attendance{
-            font-size:18px;
-            margin-bottom:20px;
-        }
-
-        .progress-container{
-            width:100%;
-            background:#374151;
-            height:14px;
-            border-radius:20px;
-            overflow:hidden;
-            margin-bottom:25px;
-        }
-
-        .progress-bar{
-            height:100%;
-            width:86%;
-            background:#10B981;
-        }
-
-        .safe-box{
+        .feedback-header{
             display:flex;
             justify-content:space-between;
-            margin-bottom:12px;
-            padding:12px;
-            border-radius:10px;
+            align-items:center;
+            margin-bottom:15px;
+        }
+
+        .feedback-header button{
+            background:none;
+            border:none;
+            color:white;
+            font-size:18px;
+            cursor:pointer;
+        }
+
+        .feedback-text{
+            color:#D1D5DB;
+            margin-bottom:15px;
+            font-size:14px;
+            line-height:1.5;
+        }
+
+        .feedback-popup textarea{
+            width:100%;
             background:#374151;
+            border:none;
+            border-radius:10px;
+            padding:12px;
+            color:white;
+            margin-bottom:15px;
+            font-size:14px;
+            height:120px;
+            resize:none;
         }
 
-        .safe-box span{
+        .feedback-popup textarea:focus{
+            outline:none;
+            border:2px solid #3B82F6;
+        }
+
+        .feedback-popup button{
+            width:100%;
+            padding:12px;
+            border:none;
+            border-radius:10px;
+            background:#2563EB;
+            color:white;
+            cursor:pointer;
             font-size:15px;
+            transition:0.3s;
         }
 
-        .green{
+        .feedback-popup button:hover{
+            background:#1D4ED8;
+        }
+
+        #feedbackStatus{
+            margin-top:12px;
+            text-align:center;
             color:#10B981;
-            font-weight:bold;
+            font-size:14px;
         }
 
-        .yellow{
-            color:#FBBF24;
-            font-weight:bold;
+        #loadingOverlay{
+            position:fixed;
+            top:0;
+            left:0;
+            width:100%;
+            height:100%;
+            background:#111827;
+            display:none;
+            justify-content:center;
+            align-items:center;
+            z-index:99999;
         }
 
-        .red{
-            color:#EF4444;
-            font-weight:bold;
+        .loader-box{
+            text-align:center;
+        }
+
+        .spinner{
+            width:70px;
+            height:70px;
+            border:6px solid #374151;
+            border-top:6px solid #3B82F6;
+            border-radius:50%;
+            animation:spin 1s linear infinite;
+            margin:auto;
+            margin-bottom:25px;
+        }
+
+        @keyframes spin{
+            0%{
+                transform:rotate(0deg);
+            }
+
+            100%{
+                transform:rotate(360deg);
+            }
+        }
+
+        #loadingText{
+            color:white;
+            font-size:24px;
+            font-weight:600;
         }
 
         @media(max-width:600px){
@@ -188,6 +248,15 @@
                 font-size:32px;
             }
 
+            .feedback-popup{
+                width:90%;
+                left:5%;
+            }
+
+            .feedback-button{
+                left:15px;
+                bottom:15px;
+            }
         }
 
     </style>
@@ -197,16 +266,12 @@
 
     <div class="container">
 
-        <!-- TITLE -->
-
         <div class="title">
             <h1>Attendance Analyzer</h1>
             <p>
                 Track your attendance and safe bunk limits instantly.
             </p>
         </div>
-
-        <!-- LOGIN FORM -->
 
         <form class="login-box" method="POST" action="/analyze">
 
@@ -240,633 +305,182 @@
 
         </form>
 
-        <!-- DASHBOARD -->
+    </div>
 
-        <div class="dashboard-title">
-            <h2>Attendance Dashboard</h2>
+    <div class="feedback-button" onclick="openFeedback()">
+        💬 Feedback
+    </div>
+
+    <div class="feedback-popup" id="feedbackPopup">
+
+        <div class="feedback-header">
+
+            <h3>Anonymous Feedback</h3>
+
+            <button onclick="closeFeedback()">
+                ✕
+            </button>
+
         </div>
 
-        <div class="subject-grid">
+        <p class="feedback-text">
+            Your feedback can help make this site better.
+        </p>
 
-            <!-- SUBJECT CARD -->
+        <textarea
+            id="feedbackMessage"
+            placeholder="Enter feedback..."
+        ></textarea>
 
-            <div class="subject-card">
+        <button onclick="submitFeedback()">
+            Send Feedback
+        </button>
 
-                <div class="subject-name">
-                    Probability & Statistics
-                </div>
+        <div id="feedbackStatus"></div>
 
-                <div class="attendance">
-                    Attendance: <b>86.7%</b>
-                </div>
+    </div>
 
-                <div class="progress-container">
-                    <div class="progress-bar"></div>
-                </div>
+    <div id="loadingOverlay">
 
-                <div class="safe-box">
-                    <span>Safe Leaves for 75%</span>
-                    <span class="green">7</span>
-                </div>
+        <div class="loader-box">
 
-                <div class="safe-box">
-                    <span>Safe Leaves for 80%</span>
-                    <span class="yellow">3</span>
-                </div>
+            <div class="spinner"></div>
 
-                <div class="safe-box">
-                    <span>Safe Leaves for 90%</span>
-                    <span class="red">0</span>
-                </div>
-
-            </div>
-
-            <!-- SUBJECT CARD -->
-
-            <div class="subject-card">
-
-                <div class="subject-name">
-                    Database Management Systems
-                </div>
-
-                <div class="attendance">
-                    Attendance: <b>91.2%</b>
-                </div>
-
-                <div class="progress-container">
-                    <div class="progress-bar"></div>
-                </div>
-
-                <div class="safe-box">
-                    <span>Safe Leaves for 75%</span>
-                    <span class="green">9</span>
-                </div>
-
-                <div class="safe-box">
-                    <span>Safe Leaves for 80%</span>
-                    <span class="yellow">5</span>
-                </div>
-
-                <div class="safe-box">
-                    <span>Safe Leaves for 90%</span>
-                    <span class="red">1</span>
-                </div>
-
-            </div>
-
-            <!-- SUBJECT CARD -->
-
-            <div class="subject-card">
-
-                <div class="subject-name">
-                    Theory of Computation
-                </div>
-
-                <div class="attendance">
-                    Attendance: <b>74.8%</b>
-                </div>
-
-                <div class="progress-container">
-                    <div 
-                        class="progress-bar"
-                        style="background:#EF4444; width:74%;"
-                    ></div>
-                </div>
-
-                <div class="safe-box">
-                    <span>Safe Leaves for 75%</span>
-                    <span class="red">0</span>
-                </div>
-
-                <div class="safe-box">
-                    <span>Safe Leaves for 80%</span>
-                    <span class="red">0</span>
-                </div>
-
-                <div class="safe-box">
-                    <span>Safe Leaves for 90%</span>
-                    <span class="red">0</span>
-                </div>
-
-            </div>
+            <h2 id="loadingText">
+                Loading...
+            </h2>
 
         </div>
 
     </div>
-    <!-- ========================================= -->
-<!-- FEEDBACK BUTTON -->
-<!-- ========================================= -->
 
-<div class="feedback-button" onclick="openFeedback()">
-    💬 Feedback
-</div>
+    <script>
 
-<!-- ========================================= -->
-<!-- FEEDBACK POPUP -->
-<!-- ========================================= -->
+    function openFeedback(){
 
-<div class="feedback-popup" id="feedbackPopup">
-
-    <div class="feedback-header">
-
-        <h3>Anonymous Feedback</h3>
-
-        <button onclick="closeFeedback()">
-            ✕
-        </button>
-
-    </div>
-
-    <p class="feedback-text">
-        Found a bug or have an idea?
-    </p>
-
-    
-
-    <textarea
-        id="feedbackMessage"
-        placeholder="Enter feedback..."
-    ></textarea>
-
-    <button onclick="submitFeedback()">
-        Send Feedback
-    </button>
-
-    <div id="feedbackStatus"></div>
-
-</div>
-
-<!-- ========================================= -->
-<!-- FEEDBACK STYLES -->
-<!-- ========================================= -->
-
-<style>
-
-.feedback-button{
-
-    position:fixed;
-
-    bottom:20px;
-    left:20px;
-
-    background:#2563EB;
-
-    color:white;
-
-    padding:14px 18px;
-
-    border-radius:14px;
-
-    cursor:pointer;
-
-    box-shadow:0px 8px 25px rgba(0,0,0,0.4);
-
-    z-index:999;
-}
-
-.feedback-button:hover{
-
-    background:#1D4ED8;
-}
-
-.feedback-popup{
-
-    position:fixed;
-
-    bottom:80px;
-    left:20px;
-
-    width:320px;
-
-    background:#1F2937;
-
-    border-radius:18px;
-
-    padding:20px;
-
-    box-shadow:0px 10px 35px rgba(0,0,0,0.5);
-
-    display:none;
-
-    z-index:1000;
-}
-
-.feedback-header{
-
-    display:flex;
-
-    justify-content:space-between;
-
-    align-items:center;
-
-    margin-bottom:15px;
-}
-
-.feedback-header button{
-
-    background:none;
-
-    border:none;
-
-    color:white;
-
-    font-size:18px;
-
-    cursor:pointer;
-}
-
-.feedback-text{
-
-    color:#D1D5DB;
-
-    margin-bottom:15px;
-
-    font-size:14px;
-}
-
-.feedback-popup input,
-.feedback-popup textarea{
-
-    width:100%;
-
-    background:#374151;
-
-    border:none;
-
-    border-radius:10px;
-
-    padding:12px;
-
-    color:white;
-
-    margin-bottom:15px;
-
-    font-size:14px;
-}
-
-.feedback-popup textarea{
-
-    height:120px;
-
-    resize:none;
-}
-
-.feedback-popup button{
-
-    width:100%;
-
-    padding:12px;
-
-    border:none;
-
-    border-radius:10px;
-
-    background:#2563EB;
-
-    color:white;
-
-    cursor:pointer;
-}
-
-.feedback-popup button:hover{
-
-    background:#1D4ED8;
-}
-
-#feedbackStatus{
-
-    margin-top:12px;
-
-    text-align:center;
-
-    color:#10B981;
-
-    font-size:14px;
-}
-
-</style>
-
-<!-- ========================================= -->
-<!-- FEEDBACK BUTTON -->
-<!-- ========================================= -->
-
-<div class="feedback-button" onclick="openFeedback()">
-    💬 Feedback
-</div>
-
-<!-- ========================================= -->
-<!-- FEEDBACK POPUP -->
-<!-- ========================================= -->
-
-<div class="feedback-popup" id="feedbackPopup">
-
-    <div class="feedback-header">
-
-        <h3>Anonymous Feedback</h3>
-
-        <button onclick="closeFeedback()">
-            ✕
-        </button>
-
-    </div>
-
-    <p class="feedback-text">
-        Found a bug or have an idea?
-    </p>
-
-    <textarea
-        id="feedbackMessage"
-        placeholder="Enter feedback..."
-    ></textarea>
-
-    <button onclick="submitFeedback()">
-        Send Feedback
-    </button>
-
-    <div id="feedbackStatus"></div>
-
-</div>
-
-<!-- ========================================= -->
-<!-- FEEDBACK STYLES -->
-<!-- ========================================= -->
-
-<style>
-
-.feedback-button{
-
-    position:fixed;
-
-    bottom:20px;
-    left:20px;
-
-    background:#2563EB;
-
-    color:white;
-
-    padding:14px 18px;
-
-    border-radius:14px;
-
-    cursor:pointer;
-
-    box-shadow:0px 8px 25px rgba(0,0,0,0.4);
-
-    z-index:999;
-
-    transition:0.3s;
-}
-
-.feedback-button:hover{
-
-    background:#1D4ED8;
-
-    transform:translateY(-2px);
-}
-
-.feedback-popup{
-
-    position:fixed;
-
-    bottom:80px;
-    left:20px;
-
-    width:320px;
-
-    background:#1F2937;
-
-    border-radius:18px;
-
-    padding:20px;
-
-    box-shadow:0px 10px 35px rgba(0,0,0,0.5);
-
-    display:none;
-
-    z-index:1000;
-}
-
-.feedback-header{
-
-    display:flex;
-
-    justify-content:space-between;
-
-    align-items:center;
-
-    margin-bottom:15px;
-}
-
-.feedback-header h3{
-
-    font-size:20px;
-}
-
-.feedback-header button{
-
-    background:none;
-
-    border:none;
-
-    color:white;
-
-    font-size:18px;
-
-    cursor:pointer;
-}
-
-.feedback-text{
-
-    color:#D1D5DB;
-
-    margin-bottom:15px;
-
-    font-size:14px;
-
-    line-height:1.5;
-}
-
-.feedback-popup textarea{
-
-    width:100%;
-
-    background:#374151;
-
-    border:none;
-
-    border-radius:10px;
-
-    padding:12px;
-
-    color:white;
-
-    margin-bottom:15px;
-
-    font-size:14px;
-
-    height:120px;
-
-    resize:none;
-}
-
-.feedback-popup textarea:focus{
-
-    outline:none;
-
-    border:2px solid #3B82F6;
-}
-
-.feedback-popup button{
-
-    width:100%;
-
-    padding:12px;
-
-    border:none;
-
-    border-radius:10px;
-
-    background:#2563EB;
-
-    color:white;
-
-    cursor:pointer;
-
-    font-size:15px;
-
-    transition:0.3s;
-}
-
-.feedback-popup button:hover{
-
-    background:#1D4ED8;
-}
-
-#feedbackStatus{
-
-    margin-top:12px;
-
-    text-align:center;
-
-    color:#10B981;
-
-    font-size:14px;
-}
-
-@media(max-width:600px){
-
-    .feedback-popup{
-
-        width:90%;
-
-        left:5%;
+        document.getElementById(
+            "feedbackPopup"
+        ).style.display = "block";
     }
 
-    .feedback-button{
+    function closeFeedback(){
 
-        left:15px;
-        bottom:15px;
-    }
-}
-
-</style>
-
-<!-- ========================================= -->
-<!-- FEEDBACK SCRIPT -->
-<!-- ========================================= -->
-
-<script>
-
-function openFeedback(){
-
-    document.getElementById(
-        "feedbackPopup"
-    ).style.display = "block";
-}
-
-function closeFeedback(){
-
-    document.getElementById(
-        "feedbackPopup"
-    ).style.display = "none";
-}
-
-async function submitFeedback(){
-
-    const message = document.getElementById(
-        "feedbackMessage"
-    ).value;
-
-    const status = document.getElementById(
-        "feedbackStatus"
-    );
-
-    if(message.trim() === ""){
-
-        status.innerHTML =
-        "Please enter feedback.";
-
-        status.style.color = "#EF4444";
-
-        return;
+        document.getElementById(
+            "feedbackPopup"
+        ).style.display = "none";
     }
 
-    const formData = new FormData();
+    async function submitFeedback(){
 
-    formData.append(
-        "message",
-        message
-    );
+        const message = document.getElementById(
+            "feedbackMessage"
+        ).value;
 
-    try{
-
-        const response = await fetch(
-            "/feedback",
-            {
-                method:"POST",
-                body:formData
-            }
+        const status = document.getElementById(
+            "feedbackStatus"
         );
 
-        const data = await response.json();
-
-        if(data.success){
+        if(message.trim() === ""){
 
             status.innerHTML =
-            "Feedback submitted ❤️";
+            "Please enter feedback.";
 
-            status.style.color = "#10B981";
+            status.style.color = "#EF4444";
 
-            document.getElementById(
-                "feedbackMessage"
-            ).value = "";
+            return;
+        }
 
-            setTimeout(() => {
+        const formData = new FormData();
 
-                closeFeedback();
+        formData.append(
+            "message",
+            message
+        );
 
-                status.innerHTML = "";
+        try{
 
-            }, 1500);
+            const response = await fetch(
+                "/feedback",
+                {
+                    method:"POST",
+                    body:formData
+                }
+            );
 
-        }else{
+            const data = await response.json();
+
+            if(data.success){
+
+                status.innerHTML =
+                "Feedback submitted ❤️";
+
+                status.style.color = "#10B981";
+
+                document.getElementById(
+                    "feedbackMessage"
+                ).value = "";
+
+                setTimeout(() => {
+
+                    closeFeedback();
+
+                    status.innerHTML = "";
+
+                }, 1500);
+
+            }else{
+
+                status.innerHTML =
+                "Failed to submit feedback.";
+
+                status.style.color = "#EF4444";
+            }
+
+        }catch(error){
 
             status.innerHTML =
-            "Failed to submit feedback.";
+            "Something went wrong.";
 
             status.style.color = "#EF4444";
         }
-
-    }catch(error){
-
-        status.innerHTML =
-        "Something went wrong.";
-
-        status.style.color = "#EF4444";
     }
-}
 
-</script>
+    document.querySelector("form")
+    .addEventListener(
+        "submit",
+        function(){
+
+            const overlay = document.getElementById(
+                "loadingOverlay"
+            );
+
+            const loadingText = document.getElementById(
+                "loadingText"
+            );
+
+            overlay.style.display = "flex";
+
+            loadingText.innerHTML =
+            "Loading...";
+
+            setTimeout(() => {
+
+                loadingText.innerHTML =
+                "Logging into your account...";
+
+            }, 1200);
+
+            setTimeout(() => {
+
+                loadingText.innerHTML =
+                "Scraping your attendance data...";
+
+            }, 2800);
+
+        }
+    );
+
+    </script>
 
 </body>
 </html>
