@@ -446,39 +446,47 @@
     }
 
     document.querySelector("form")
-    .addEventListener(
-        "submit",
-        function(){
+.addEventListener(
+    "submit",
+    function(){
 
-            const overlay = document.getElementById(
-                "loadingOverlay"
-            );
+        const overlay = document.getElementById(
+            "loadingOverlay"
+        );
 
-            const loadingText = document.getElementById(
-                "loadingText"
-            );
+        const loadingText = document.getElementById(
+            "loadingText"
+        );
 
-            overlay.style.display = "flex";
+        overlay.style.display = "flex";
 
-            loadingText.innerHTML =
-            "Loading...";
+        const messages = [
 
-            setTimeout(() => {
+            "Loading...",
+
+            "Logging into your account...",
+
+            "Scraping your attendance data..."
+        ];
+
+        let index = 0;
+
+        loadingText.innerHTML = messages[index];
+
+        const interval = setInterval(() => {
+
+            index++;
+
+            if(index < messages.length){
 
                 loadingText.innerHTML =
-                "Logging into your account...";
+                messages[index];
+            }
 
-            }, 1200);
+        }, 1000);
 
-            setTimeout(() => {
-
-                loadingText.innerHTML =
-                "Scraping your attendance data...";
-
-            }, 2800);
-
-        }
-    );
+    }
+);
 
     </script>
 
