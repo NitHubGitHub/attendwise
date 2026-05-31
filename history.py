@@ -175,3 +175,29 @@ def save_snapshot(data):
 
     history_sheet.append_row(row)
 
+# ============================================
+# GET STUDENT HISTORY
+# ============================================
+
+def get_student_history(roll):
+
+    spreadsheet = get_spreadsheet()
+
+    history_sheet = spreadsheet.worksheet(
+        "AttendanceHistory"
+    )
+
+    rows = history_sheet.get_all_records()
+
+    student_rows = []
+
+    for row in rows:
+
+        if (
+            str(row.get("Roll", "")).strip()
+            == str(roll).strip()
+        ):
+
+            student_rows.append(row)
+
+    return student_rows

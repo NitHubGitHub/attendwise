@@ -7,6 +7,7 @@ from flask import (
 
 from attendance_logic import analyze_attendance
 from feedback import submit_feedback
+from history import get_student_history
 
 app = Flask(__name__)
 
@@ -30,6 +31,103 @@ def home():
 	     ) as f:
 
            return f.read()
+
+@app.route("/history")
+def history():
+
+    roll = session.get(
+        "roll_number"
+    )
+
+    history_rows = (
+        get_student_history(roll)
+    )
+
+    html = """
+
+    <html>
+
+    <head>
+
+        <title>
+            Attendance History
+        </title>
+
+        <style>
+
+            body{
+                background:#111827;
+                color:white;
+                font-family:Arial;
+                padding:40px;
+            }
+
+            .record-btn{
+
+                display:block;
+
+                width:300px;
+
+                margin:15px auto;
+
+                padding:18px;
+
+                background:#2563EB;
+
+                color:white;
+
+                text-decoration:none;
+
+                text-align:center;
+
+                border-radius:12px;
+
+                font-size:18px;
+            }
+
+        </style>
+
+    </head>
+
+    <body>
+
+        <h1
+        style="text-align:center;"
+        >
+            Attendance History
+        </h1>
+
+    """
+    for i, row in enumerate(history_rows):
+
+        valid_until = row.get(
+            "ValidUntil",
+            "Unknown"
+        )
+
+        html += f"""
+
+        <a
+        href="/history/{i}"
+        class="record-btn"
+        >
+
+        📅 {valid_until}
+
+        </a>
+
+        """
+    html += """
+
+    </body>
+
+    </html>
+
+    """
+
+    return html
+
+@app.route("/history/<int:index>")
 
 # ============================================
 # ANALYZE ATTENDANCE
@@ -247,6 +345,40 @@ def analyze():
                 </p>
 
             </div>
+
+            <div class="title">
+
+    <h1>Attendance Dashboard</h1>
+
+    <p>
+        Live attendance analytics and safe bunk predictions
+    </p>
+
+    </div>
+
+    <div style="text-align:center; margin-bottom:35px;">
+
+        <a href="/history"
+        style="
+        display:inline-block;
+        background:#2563EB;
+        color:white;
+        text-decoration:none;
+        padding:15px 30px;
+        border-radius:12px;
+        font-size:18px;
+        font-weight:bold;
+        ">
+
+        📚 View Previous Attendance Records
+
+        </a>
+
+    </div>
+
+    <div class="grid">
+
+	
 
             <div class="grid">
 
