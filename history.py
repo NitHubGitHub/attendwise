@@ -1,4 +1,3 @@
-```python
 import gspread
 import json
 import os
@@ -175,4 +174,4 @@ def save_snapshot(data):
         )
 
     history_sheet.append_row(row)
-```
+
