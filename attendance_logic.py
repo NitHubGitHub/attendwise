@@ -245,6 +245,12 @@ def analyze_attendance(email, password):
         pass
 
     # ============================================
+    # FIND ATTENDANCE TABLE
+    # ============================================
+
+    table = attendance_soup.find("table")
+
+    # ============================================
     # SAFETY CHECK
     # ============================================
 
