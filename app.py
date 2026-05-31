@@ -127,7 +127,7 @@ def history():
 
     return html
 
-@app.route("/history/<int:index>")
+
 
 # ============================================
 # ANALYZE ATTENDANCE
@@ -346,15 +346,9 @@ def analyze():
 
             </div>
 
-            <div class="title">
+            
 
-    <h1>Attendance Dashboard</h1>
-
-    <p>
-        Live attendance analytics and safe bunk predictions
-    </p>
-
-    </div>
+    
 
     <div style="text-align:center; margin-bottom:35px;">
 
@@ -380,7 +374,7 @@ def analyze():
 
 	
 
-            <div class="grid">
+            
 
     """
 
@@ -496,11 +490,19 @@ def analyze():
 
             </div>
 
-            <a href="/" class="back-btn">
-                Analyze Another Student
-            </a>
+            <div style="text-align:center; margin-top:40px;">
 
-        </div>
+                <a href="/" class="back-btn">
+                    Analyze Another Student
+                </a>
+
+            </div>
+
+            </div>
+
+            </body>
+
+            </html>
 
     </body>
 
