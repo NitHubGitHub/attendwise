@@ -8,6 +8,7 @@ import os
 import json
 
 from subjects import subjects
+from history import save_snapshot
 
 from oauth2client.service_account import (
     ServiceAccountCredentials
@@ -205,6 +206,34 @@ def analyze_attendance(email, password):
         attendance.text,
         "html.parser"
     )
+    # ============================================
+    # EXTRACT VALID UNTIL
+    # ============================================
+
+    valid_until = "Unknown"
+
+    try:
+
+        valid_tag = attendance_soup.find(
+            "h3",
+            class_="card-title card-title-text"
+        )
+
+        if valid_tag:
+
+            text = valid_tag.get_text(strip=True)
+
+            if "Valid Until" in text:
+
+                valid_until = (
+                    text.replace("Valid Until :", "")
+                    .replace("Valid Until:", "")
+                    .strip()
+                )
+
+    except Exception:
+
+        pass
 
     table = attendance_soup.find("table")
 
@@ -328,6 +357,20 @@ def analyze_attendance(email, password):
             except Exception as e:
 
                 print("ERROR:", e)
+    
+
+
+    data = {
+
+    "roll": email,
+    "name": name,
+    "valid_until": valid_until,
+    "results": results
+    }
+
+    save_snapshot(data)
+
+
 
     # ============================================
     # RETURN RESULTS
@@ -335,8 +378,13 @@ def analyze_attendance(email, password):
 
     return {
 
-        "success": True,
+    "success": True,
 
-        "results": results
+    "roll": email,
 
-    }
+    "name": name,
+
+    "valid_until": valid_until,
+
+    "results": results
+}
