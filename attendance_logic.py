@@ -214,33 +214,35 @@ def analyze_attendance(email, password):
 # EXTRACT VALID UNTIL
 # ============================================
 
+    # ============================================
+# EXTRACT VALID UNTIL
+# ============================================
+
     valid_until = "Unknown"
 
     try:
 
-            all_h3s = attendance_soup.find_all(
-                "h3",
-                class_="card-title card-title-text"
+        date_element = attendance_soup.find(
+            style=lambda value:
+            value and "margin-left: auto" in value
+        )
+
+        if date_element:
+
+            text = date_element.get_text(
+                strip=True
             )
 
-            for tag in all_h3s:
+            if ":" in text:
 
-                text = tag.get_text(strip=True)
-
-                if "Valid Until" in text:
-
-                    valid_until = (
-                        text.replace("Valid Until :", "")
-                        .replace("Valid Until:", "")
-                        .strip()
-                    )
-
-                    break
+                valid_until = (
+                    text.split(":")[-1]
+                    .strip()
+                )
 
     except Exception:
 
-            pass
-    table = attendance_soup.find("table")
+        pass
 
     # ============================================
     # SAFETY CHECK
