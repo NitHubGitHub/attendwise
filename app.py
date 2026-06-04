@@ -126,7 +126,7 @@ def history():
         <a
         href="/history/{i}"
         class="record-btn"
-	onclick="showLoading()"
+	onclick="return navigateWithLoading(event, '/history/{i}')"
         >
 
         📅 {valid_until}
@@ -165,6 +165,21 @@ def history():
         	"loading"
     	).style.display = "flex";
 
+	}
+
+	function navigateWithLoading(event, url){
+
+    	event.preventDefault();
+
+    	showLoading();
+
+    	setTimeout(function(){
+
+        	window.location.href = url;
+
+    	}, 100);
+
+    	return false;
 	}
 
 	</script>
