@@ -155,6 +155,7 @@ def history():
 	"
 	>
 	Loading Attendance Record...
+    This will take a few seconds as we fetch the data from the university server.
 	</div>
 
 	<script>
