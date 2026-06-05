@@ -274,7 +274,12 @@
             </p>
         </div>
 
-        <form class="login-box" method="POST" action="/analyze">
+        <form
+            id="loginForm"
+            class="login-box"
+            method="POST"
+            action="/analyze"
+        >
 
             <h2>Login</h2>
 
@@ -300,7 +305,10 @@
                 >
             </div>
 
-            <button class="btn">
+            <button
+                type="submit"
+                class="btn"
+            >
                 Analyze Attendance
             </button>
 
@@ -446,10 +454,12 @@
         }
     }
 
-    document.querySelector("form")
+    document.getElementById("loginForm")
 .addEventListener(
     "submit",
-    function(){
+    function(event){
+
+        event.preventDefault();
 
         const overlay = document.getElementById(
             "loadingOverlay"
@@ -474,7 +484,7 @@
 
         loadingText.innerHTML = messages[index];
 
-        const interval = setInterval(() => {
+        setInterval(() => {
 
             index++;
 
@@ -485,6 +495,14 @@
             }
 
         }, 1000);
+
+        setTimeout(() => {
+
+            document.getElementById(
+                "loginForm"
+            ).submit();
+
+        }, 100);
 
     }
 );
